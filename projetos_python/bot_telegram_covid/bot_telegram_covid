@@ -1,0 +1,52 @@
+# Instalar o pacote python-telegram-bot
+
+#Importando a biblioteca Telegram
+import telegram
+
+# Inserindo o token do botfather telegram
+bot = telegram.Bot(token='1739969966:AAGqufW9qxLLiN3SGlAwxQHZ4P2h5INlpQU')
+
+#Criando um programa Hello World
+
+#importando novas bibliotecas
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+updater = Updater(token='1739969966:AAGqufW9qxLLiN3SGlAwxQHZ4P2h5INlpQU', use_context=True)
+dispatcher= updater.dispatcher
+
+#criando uma função hello
+def hello(update,context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Hello, World')
+
+#Associamos o comando /hello com a função hello()
+hello_handler = CommandHandler('hello', hello)
+dispatcher.add_handler(hello_handler)
+
+# Para iniciar o bot
+updater.start_polling()
+
+
+#Usando esse bot para informações sobre COVID-19
+import requests
+import json
+
+def covid(update, context):
+    response = requests.get('https://api.covid19api.com/summary')
+    if(response.status_code==200): #Caso esteja correto
+        data = response.json()
+        brazil = data['Countries'][24:25]
+        # def brasil():
+        #     print('NewConfirmed: ', brazil[0]['NewConfirmed'])
+        #     print('TotalConfirmed: ', brazil[0]['TotalConfirmed'])
+        #     print('NewDeaths: ', brazil[0]['NewDeaths'])
+        #     print('TotalDeaths: ', brazil[0]['TotalDeaths'])
+        #     print('NewRecovered: ', brazil[0]['NewRecovered'])
+        #     print('TotalRecovered: ', brazil[0]['TotalRecovered'])
+        #     print('Date: ', brazil[0]['Date'])
+
+        context.bot.send_message(chat_id=update.effective_chat.id, text=brazil)
+
+    else: #something went wrong
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Erro, alguma coisa está errada.")
+
+corona_summary_handler = CommandHandler('covid', covid)
+dispatcher.add_handler(corona_summary_handler)
